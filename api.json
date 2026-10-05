@@ -1,0 +1,31 @@
+{
+ "site": "Signature Space Mapping",
+ "site_number": 34,
+ "of": 34,
+ "tagline": "Map any room. Feed the future robots.",
+ "counts": {
+  "sample_maps": 300,
+  "goal": 1000000
+ },
+ "pages": {
+  "main": "https://justinahiggins614-cmyk.github.io/signature-space-mapping/",
+  "mapper": "https://justinahiggins614-cmyk.github.io/signature-space-mapping/mapper.html",
+  "robots": "https://justinahiggins614-cmyk.github.io/signature-space-mapping/robots.html",
+  "archive": "https://justinahiggins614-cmyk.github.io/signature-space-mapping/archive.html"
+ },
+ "robot": {
+  "library": "https://justinahiggins614-cmyk.github.io/signature-space-mapping/js/robot-api.js",
+  "format": {
+   "pgm": "P5 binary: 0=occupied, 205=unknown, 254=free",
+   "yaml": "ROS map_server: image, resolution (m/px), origin [x,y,0], negate, occupied_thresh, free_thresh",
+   "json": "signature-robot-map/1.0: walls/doors/obstacles in meters, path, coverage"
+  },
+  "map_index": "https://justinahiggins614-cmyk.github.io/signature-space-mapping/data/maps.json"
+ },
+ "exports": [
+  "svg",
+  "pgm",
+  "yaml",
+  "json"
+ ]
+}

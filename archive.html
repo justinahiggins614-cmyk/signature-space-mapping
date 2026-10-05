@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>1 Million Mapped Spaces — Signature Space Mapping</title>
+<meta name="description" content="Every mapped space, A to Z — sample layouts marching to one million, plus your own device-local maps.">
+<style>:root{--cy:#35c8e6;--cy2:#9be8fa;--navy:#0a1628;--panel:#0e1f38;--line:#1e4a6e;--txt:#eef6ff;--dim:#93b4cc}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--txt);background:var(--navy);min-height:100vh}
+.wrap{max-width:1060px;margin:0 auto;padding:14px 12px 40px}
+.kicker{letter-spacing:.25em;font-size:.72rem;color:var(--cy);margin:10px 0 4px}
+h1{font-size:1.7rem;margin:.1em 0}
+h2{color:var(--cy2);font-size:1.25rem;margin:1.2em 0 .4em}
+p{line-height:1.6}
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.tabs a{flex:1 1 120px;text-align:center;text-decoration:none;color:var(--txt);background:var(--panel);border:2px solid var(--line);border-radius:999px;padding:11px 8px;font-weight:700}
+.tabs a.active{background:var(--cy);color:#06121a;border-color:var(--cy)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+.card h3{margin:.2em 0;color:var(--cy2)}
+.btn{display:inline-block;background:var(--cy);color:#06121a;border:0;border-radius:999px;padding:13px 26px;font-weight:800;font-size:1rem;cursor:pointer;text-decoration:none;margin:6px 6px 6px 0}
+.btn.ghost{background:transparent;color:var(--cy2);border:2px solid var(--cy)}
+.btn.warn{background:#e6a335}.btn.danger{background:#e65c5c;color:#fff}
+.btn:disabled{opacity:.45;cursor:default}
+.hint{color:var(--dim);font-size:.85rem}
+.mono{font-family:ui-monospace,Consolas,monospace;background:#060d18;border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;font-size:.85rem}
+.badge{display:inline-block;border-radius:999px;padding:3px 12px;font-size:.78rem;font-weight:700}
+.badge.ok{background:#0e3a2a;color:var(--cy2)}.badge.warn{background:#3a2f0e;color:#ffd97f}.badge.no{background:#3a1414;color:#ff9d9d}
+.badge.sample{background:#1a2f4a;color:var(--cy2)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.jahnet{margin:26px 0 10px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#0b1a30;font-size:.82rem;line-height:2.1}
+.jahnet-t{color:var(--cy);font-weight:800;letter-spacing:.2em;margin-right:10px}
+.jahnet a{color:var(--dim);text-decoration:none;margin:0 8px 0 0;white-space:nowrap}
+.jahnet .here{display:inline-block;background:#0e3a2a;color:var(--cy2);border:1px solid var(--cy);border-radius:999px;padding:2px 12px;font-weight:800;margin:4px 0}
+footer{color:#5f7d99;font-size:.78rem;text-align:center;margin:20px 0}
+input[type=text],input[type=number],textarea,select{background:#060d18;color:var(--txt);border:2px solid var(--line);border-radius:10px;padding:11px 13px;font-size:.95rem}
+label.fl{display:block;margin:8px 0 4px;color:var(--cy2);font-weight:700}
+.stepbar{display:flex;gap:6px;margin:14px 0;flex-wrap:wrap}
+.step{flex:1 1 150px;text-align:center;padding:12px 6px;border-radius:10px;border:2px solid var(--line);color:var(--dim);font-weight:700;font-size:.9rem}
+.step.on{border-color:var(--cy);color:var(--cy2)}
+.step.done{border-color:var(--cy);background:#0e3a2a;color:var(--cy2)}
+#mapCanvasWrap{position:relative;border:2px solid var(--line);border-radius:14px;overflow:hidden;background:#050b14;touch-action:none}
+#mapCanvas{display:block;width:100%;height:min(62vh,520px);cursor:crosshair}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tbtn{background:var(--panel);color:var(--txt);border:2px solid var(--line);border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:.92rem}
+.tbtn.on{background:var(--cy);color:#06121a;border-color:var(--cy)}
+.capstrip{display:flex;gap:8px;overflow-x:auto;padding:8px 2px}
+.capstrip figure{margin:0;min-width:120px;text-align:center}
+.capstrip img{width:120px;height:90px;object-fit:cover;border-radius:8px;border:2px solid var(--line)}
+.capstrip figcaption{font-size:.75rem;color:var(--dim)}
+.photocard{border:1px solid var(--line);border-radius:12px;padding:10px;margin:8px 0;background:#0b1a30}
+.photocard img{width:100%;border-radius:8px;cursor:crosshair}
+.ptag{display:inline-block;background:#12324a;border:1px solid var(--cy);color:var(--cy2);border-radius:999px;padding:2px 10px;font-size:.78rem;margin:2px}
+.ptag.shared{background:#0e3a2a;border-color:var(--cy)}
+.az{margin:8px 0}.az summary{cursor:pointer;font-weight:800;color:var(--cy2);padding:10px;background:#0b1a30;border:1px solid var(--line);border-radius:10px}
+.az .row{padding:8px 4px;border-bottom:1px dashed #1e4a6e;font-size:.92rem}
+.best{border:2px solid var(--cy);background:#0b2432}
+pre.code{background:#060d18;border:1px solid var(--line);border-radius:10px;padding:12px;overflow-x:auto;font-size:.82rem;line-height:1.5}
+table.spec{width:100%;border-collapse:collapse;font-size:.9rem}
+table.spec td,table.spec th{border:1px solid var(--line);padding:8px 10px;text-align:left}
+table.spec th{color:var(--cy2)}
+#jahWelcome,#jahGuide,#jahGuideBtn{--amber:#35c8e6;--amber2:#9be8fa}
+#jahGuideBtn{position:fixed;top:14px;right:14px;z-index:99900;min-width:48px;min-height:48px;border-radius:24px;border:1px solid var(--amber);background:#0e1f38;color:var(--amber2);font-weight:700;font-size:18px;padding:10px 16px;cursor:pointer}
+#jahGuideBtn:hover{background:var(--amber);color:#06121a}
+#jahWelcome{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.75)}
+#jahWelcome.show{display:flex}
+#jahWelcomeCard{background:#0e1f38;border:2px solid var(--amber);border-radius:14px;padding:22px 20px;max-width:540px;width:100%;max-height:88vh;overflow-y:auto;color:var(--txt)}
+#jahWelcomeCard h2{margin:0 0 4px;color:var(--amber2);font-size:20px}
+#jahWelcomeCard .wsub{margin:4px 0 0;color:var(--dim);font-size:14px}
+#jahWelcomeCard ol{margin:10px 0 0;padding-left:22px;font-size:14px;line-height:1.55}
+#jahWelcomeCard ol li{margin:8px 0}
+#jahWelcomeCard ol li b{color:var(--amber2)}
+#jahWelcomeCard .wbtnrow{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+#jahGuide .btn,#jahWelcome .btn{min-height:48px;min-width:48px;font-size:15px;padding:12px 22px;border-radius:10px;border:1px solid var(--amber);background:transparent;color:var(--amber2);cursor:pointer;font-family:inherit}
+#jahWelcomeOk{font-weight:700;background:var(--amber)!important;color:#06121a!important;border:none!important}
+#jahGuide{position:fixed;inset:0;z-index:99900;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.7)}
+#jahGuide.show{display:flex}
+#jahGuideCard{background:#0e1f38;border:1px solid var(--amber);border-radius:14px;max-width:680px;width:100%;max-height:86vh;overflow:auto;padding:20px 22px;color:var(--txt)}
+#jahGuideCard h2{margin-top:0;color:var(--amber2)}
+#jahGuideCard .gfeat{margin:0 0 14px;padding:10px 12px;background:#0b1a30;border:1px solid var(--line);border-radius:10px}
+#jahGuideCard .gfeat b{color:var(--amber2)}
+#jahGuideCard .gfeat p{margin:4px 0 0;font-size:14px;line-height:1.5;color:var(--txt)}
+#jahGuideCloseRow{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+</style>
+<script src="js/signin.js"></script>
+<script src="js/godmode.js"></script>
+<script src="js/archive.js" defer></script></head>
+<body>
+<div class="wrap">
+<header>
+<p class="kicker">SITE 34 OF 34 &middot; THE JAH NETWORK</p>
+<h1>🗂️ 1 Million Mapped Spaces</h1>
+<p class="hint">Sample layouts A–Z, marching to 1,000,000. Your own maps stay on your device.</p>
+</header>
+<nav class="tabs" aria-label="Site sections"><a href="index.html">🏠 Main</a><a href="mapper.html">🗺️ Mapper</a><a href="robots.html">🤖 For Robots</a><a href="archive.html" class="active">🗂️ 1 Million Archive</a></nav>
+<div class="card best">
+<h3>⭐ AI's Best of the Best</h3>
+<div id="bestBox"><p class="hint">Loading…</p></div>
+</div>
+<div class="card">
+<h3>🔍 Search &amp; ask</h3>
+<input type="search" id="archSearch" placeholder="Search mapped spaces…" aria-label="Search mapped spaces" style="width:100%">
+<div style="margin-top:8px;display:flex;gap:8px">
+<input type="search" id="aiAsk" placeholder="🤖 Ask the AI — e.g. &quot;garage&quot;" aria-label="Ask the AI" style="flex:1">
+<button class="tbtn" id="aiAskBtn">Ask</button>
+</div>
+<div id="aiAnswer" class="hint" style="margin-top:6px"></div>
+</div>
+<div class="card">
+<h3>💾 My maps (this device)</h3>
+<div id="myMaps"><p class="hint">No saved maps yet — save one from the Mapper.</p></div>
+</div>
+<div class="card">
+<h3>🗂️ Sample layouts <span class="badge sample">SAMPLES</span></h3>
+<p class="hint">Deterministic sample room layouts to learn from &mdash; clearly labeled, never posed as real user maps. Marching to <b>1,000,000</b>: <b id="mapCount">…</b> on file.</p>
+<div id="azList"></div>
+</div>
+
+<div class="jahnet"><span class="jahnet-t">THE JAH NETWORK</span><a href="https://justinahiggins614-cmyk.github.io/signature-math/">1 Signature Math</a><a href="https://justinahiggins614-cmyk.github.io/jah-calculator/">2 Signature Universal Paradox Immune Calculator</a><a href="https://justinahiggins614-cmyk.github.io/jah-dictionary/">3 The Signature Dictionary</a><a href="https://justinahiggins614-cmyk.github.io/jah-wiki/">4 JAH Wiki</a><a href="https://justinahiggins614-cmyk.github.io/jah-n-wiki-leaks/">5 JAH-N Wiki Leaks</a><a href="https://justinahiggins614-cmyk.github.io/signature-llama/">6 Signature Llama: The Fully Cyber Utilizable AI</a><a href="https://justinahiggins614-cmyk.github.io/jah-ai-models/">7 The Signature AI Phone Book</a><a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog/">8 Globally Rejustered Patent Catalog</a><a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html">9 Signature Spec Catalog Pending Patents</a><a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems/">10 The Signature PC System Depository</a><a href="https://justinahiggins614-cmyk.github.io/signature-books/">11 The Signature Book Depository</a><a href="https://justinahiggins614-cmyk.github.io/signature-comics/">12 The Signature Comic Store</a><a href="https://justinahiggins614-cmyk.github.io/signature-newspapers/">13 The Signature Global Newspaper Archive</a><a href="https://justinahiggins614-cmyk.github.io/signature-backend/">14 The Signature AI Mix and Match Generator</a><a href="https://justinahiggins614-cmyk.github.io/signature-boundless-generators/">15 The Signature Boundless Generator Archive</a><a href="https://justinahiggins614-cmyk.github.io/signature-ai-mixlab/">16 The Signature AI Mix Lab</a><a href="https://justinahiggins614-cmyk.github.io/signature-ai-olypics/">17 AI Olympics</a><a href="https://justinahiggins614-cmyk.github.io/signature-chip-maker/">18 The Signature Computer Chip Maker and Archive</a><a href="https://justinahiggins614-cmyk.github.io/signature-app-archive/">19 The Signature App Archive</a><a href="https://justinahiggins614-cmyk.github.io/signature-ai-robot-matcher/">20 The Signature AI Robot Matcher</a><a href="https://justinahiggins614-cmyk.github.io/signature-experiment-solver/">21 The Signature Experiment Solver</a><a href="https://justinahiggins614-cmyk.github.io/signature-ai-image-video-maker/">22 Signature AI Pixel</a><a href="https://justinahiggins614-cmyk.github.io/signature-ai-song-maker/">23 Signature Music Studio</a><a href="https://justinahiggins614-cmyk.github.io/signature-fixit/">24 The Signature Mr Fix-It</a><a href="https://justinahiggins614-cmyk.github.io/signature-university/">25 The Signature University</a><a href="https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/">26 The Signature Cyber Mega-Mall</a><a href="https://justinahiggins614-cmyk.github.io/signature-3d-print/">27 The Signature 3D Print Mega Mall</a><a href="https://justinahiggins614-cmyk.github.io/signature-earth/">28 Signature Earth</a><a href="https://justinahiggins614-cmyk.github.io/signature-flight-school/">29 The Signature Flight School</a><a href="https://justinahiggins614-cmyk.github.io/signature-game-store/">30 The Signature Game Store</a><a href="https://justinahiggins614-cmyk.github.io/signature-website-creator/">31 Signature Website Creator</a><a href="https://justinahiggins614-cmyk.github.io/signature-antivirus/">32 The Signature Antivirus</a><a href="https://justinahiggins614-cmyk.github.io/signature-os-updater/">33 The Signature OS Updater</a><br><span class="here">34 Signature Space Mapping &mdash; YOU ARE HERE</span></div>
+<footer>Signature Space Mapping &middot; your captures never leave your device &middot; free forever</footer>
+</div>
+
+<button id="jahGuideBtn" aria-label="Open the site guide" title="How to use this site">?</button>
+<div id="jahWelcome" aria-hidden="true">
+  <div id="jahWelcomeCard" role="dialog" aria-modal="true" aria-label="Welcome to Signature Space Mapping">
+    <h2>Welcome to Signature Space Mapping</h2>
+    <p class="wsub">Map any room. Feed the future robots.</p>
+    <ol>
+      <li><b>1 &mdash; Give.</b> Drop in room photos, grab frames from a video, or stream live from your camera.</li>
+      <li><b>2 &mdash; Map.</b> Trace walls, doors and obstacles on the top-down canvas. Set scale with anything you know the size of.</li>
+      <li><b>3 &mdash; Use.</b> Download the SVG room map plus a robot pack (occupancy grid + JSON) your future robot can navigate with.</li>
+      <li><b>🤖 Robot track mode.</b> Strap your phone to a robot vacuum and drive &mdash; the app paints the room as it goes, like the vacuum sees it.</li>
+    </ol>
+    <div class="wbtnrow">
+      <button class="btn" id="jahWelcomeOk" type="button">OK &mdash; Got it &#10003;</button>
+      <button class="btn" id="jahWelcomeFull" type="button">Full how-to guide</button>
+    </div>
+  </div>
+</div>
+<div id="jahGuide" aria-hidden="true">
+  <div id="jahGuideCard" role="dialog" aria-modal="true" aria-label="How to use this site">
+    <div id="jahGuideCloseRow">
+      <h2 style="margin:0">How to use this site</h2>
+      <button class="btn" id="jahGuideClose" type="button">&#10005; Close</button>
+    </div>
+    <div class="gfeat"><b>📸 Give &mdash; three ways in</b><p><b>Photos</b> (best for most rooms): drop in 2&ndash;3 photos, order them, mark the same doorway or corner in each &mdash; the mapper stitches them into one top-down map. <b>Video:</b> upload a walkthrough clip and capture frames. <b>Stream:</b> use your live camera, or strap the phone to a robot vacuum in Robot Vacuum Track Mode and let it paint the room.</p></div>
+    <div class="gfeat"><b>🗺️ Map &mdash; honest and guided</b><p>This is user-guided mapping, not LiDAR: you trace what you see, the app snaps, measures and keeps scale. Set scale with any known length (a doorway is usually 30&ndash;36 in). The photo stitcher aligns your marked shared points &mdash; it never invents geometry.</p></div>
+    <div class="gfeat"><b>📦 Use &mdash; real files</b><p>Top-down <b>SVG</b> for humans, plus a <b>robot pack</b>: PGM occupancy grid + ROS-style YAML + JSON. Real valid files &mdash; the same open format the on-device robot library speaks.</p></div>
+    <div class="gfeat"><b>🤖 For Robots</b><p>The For Robots tab documents the open map format and the embeddable <b>SignatureRobotMapper</b> library &mdash; feed it scans, get the live grid. Built so Manon's AI in a Signature robot body can navigate any mapped space.</p></div>
+    <div class="gfeat"><b>🗂️ 1 Million Archive</b><p>Sample room layouts marching to a million &mdash; clearly labeled samples to learn from. Save your own maps device-locally from the Mapper.</p></div>
+    <div class="gfeat"><b>🔒 Your captures stay yours</b><p>Photos and video never leave your device. Mapping happens 100% in your browser.</p></div>
+    <div class="btnrow" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+      <button class="btn" id="jahGuideTour" type="button">&#9654; Show the welcome guide</button>
+      <button class="btn" id="jahGuideClose2" type="button">&#10005; Close guide</button>
+    </div>
+  </div>
+</div>
+<script>(function(){try{
+var FLAG="jah-tour-seen-spacemap";
+var JAHPS=(function(){try{return (typeof JAHProfile!=="undefined")&&JAHProfile.store?JAHProfile.store:localStorage;}catch(e){return localStorage;}})();
+function ls(k,v){try{if(v===undefined)return JAHPS.get(k);JAHPS.set(k,v)}catch(e){return null}}
+var w=document.getElementById("jahWelcome"),guide=document.getElementById("jahGuide"),
+    guideCard=document.getElementById("jahGuideCard"),guideBtn=document.getElementById("jahGuideBtn");
+function openWelcome(){if(!w)return;w.classList.add("show");w.setAttribute("aria-hidden","false");
+  try{document.getElementById("jahWelcomeOk").focus({preventScroll:true})}catch(e){}}
+function closeWelcome(){if(!w)return;w.classList.remove("show");w.setAttribute("aria-hidden","true");ls(FLAG,"1")}
+document.getElementById("jahWelcomeOk").onclick=closeWelcome;
+document.getElementById("jahWelcomeFull").onclick=function(){closeWelcome();openGuide()};
+w.addEventListener("click",function(e){if(e.target===w)closeWelcome()});
+document.addEventListener("keydown",function(e){if(w.classList.contains("show")&&e.key==="Escape"){closeWelcome();e.preventDefault()}});
+function openGuide(){if(!guide)return;guide.classList.add("show");guide.setAttribute("aria-hidden","false");
+  try{guideCard.scrollTop=0;document.getElementById("jahGuideClose").focus({preventScroll:true})}catch(e){}}
+function closeGuide(){if(!guide)return;guide.classList.remove("show");guide.setAttribute("aria-hidden","true");
+  try{guideBtn.focus({preventScroll:true})}catch(e){}}
+guideBtn.onclick=openWelcome;
+document.getElementById("jahGuideClose").onclick=closeGuide;
+document.getElementById("jahGuideClose2").onclick=closeGuide;
+document.getElementById("jahGuideTour").onclick=function(){closeGuide();openWelcome()};
+guide.addEventListener("click",function(e){if(e.target===guide)closeGuide()});
+if(!ls(FLAG)){setTimeout(openWelcome,900)}
+}catch(e){}})();</script>
+
+<script>
+(function () {
+  var mount = document.querySelector('header .booksearch') ||
+              document.querySelector('nav.jtabbar') ||
+              document.querySelector('header nav') ||
+              document.querySelector('header') ||
+              document.body;
+  if (window.JAHProfile && JAHProfile.ui) JAHProfile.ui.renderButton(mount);
+})();
+</script>
+<script>
+(function () {
+  if (window.JAHProfile && JAHProfile.ui) {
+    var mount = document.querySelector('header') || document.body;
+    JAHProfile.ui.renderGreeting(mount);
+  }
+})();
+</script>
+</body>
+</html>
