@@ -32,15 +32,19 @@ NAV = [
  (22,"Signature AI Pixel","signature-ai-image-video-maker/"),
  (23,"Signature Music Studio","signature-ai-song-maker/"),
  (24,"The Signature Mr Fix-It","signature-fixit/"),
- (25,"The Signature University","signature-university/"),
- (26,"The Signature Cyber Mega-Mall","signature-cyber-mega-mall/"),
- (27,"The Signature 3D Print Mega Mall","signature-3d-print/"),
- (28,"Signature Earth","signature-earth/"),
- (29,"The Signature Flight School","signature-flight-school/"),
- (30,"The Signature Game Store","signature-game-store/"),
- (31,"Signature Website Creator","signature-website-creator/"),
- (32,"The Signature Antivirus","signature-antivirus/"),
- (33,"The Signature OS Updater","signature-os-updater/"),
+ (25,"Signature University","signature-university/"),
+ (26,"Signature Earth","signature-earth/"),
+ (27,"The Signature Flight School","signature-flight-school/"),
+ (28,"The Signature Game Store","signature-game-store/"),
+ (29,"Signature Website Creator","signature-website-creator/"),
+ (30,"The Signature Antivirus","signature-antivirus/"),
+ (31,"The Signature OS Updater","signature-os-updater/"),
+ # 32 = self (Signature Space Mapping), rendered only as the YOU-ARE-HERE pill
+ (33,"The Signature Cookbook","signature-cookbook/"),
+ (34,"The Signature Spell Check","signature-spell-check/"),
+ (35,"The Signature Image Grid and Measure","signature-image-grid-measure/"),
+ (36,"The Signature Cyber Mega-Mall","signature-cyber-mega-mall/"),
+ (37,"The Signature 3D Print Mega Mall","signature-3d-print/"),
 ]
 
 def nav_html():
@@ -48,7 +52,7 @@ def nav_html():
         '<a href="https://justinahiggins614-cmyk.github.io/%s">%d %s</a>' % (u, n, t)
         for n, t, u in NAV)
     return ('<div class="jahnet"><span class="jahnet-t">THE JAH NETWORK</span>' + links +
-            '<br><span class="here">34 Signature Space Mapping &mdash; YOU ARE HERE</span></div>')
+            '<br><span class="here">32 Signature Space Mapping &mdash; YOU ARE HERE</span></div>')
 
 CSS = """:root{--cy:#35c8e6;--cy2:#9be8fa;--navy:#0a1628;--panel:#0e1f38;--line:#1e4a6e;--txt:#eef6ff;--dim:#93b4cc}
 *{box-sizing:border-box}
@@ -143,7 +147,7 @@ def head(title, desc, extra=""):
 <body>
 <div class="wrap">
 <header>
-<p class="kicker">SITE 34 OF 34 &middot; THE JAH NETWORK</p>
+<p class="kicker">SITE 32 OF 37 &middot; THE JAH NETWORK</p>
 """ % (title, desc, CSS, extra)
 
 def tabs(active):
@@ -243,9 +247,12 @@ FOOT = """
 """
 
 def page(filename, title, desc, active_tab, h1, sub, body, extra_head=""):
+    # Standing rule: the JAH Network website list appears ONLY at the bottom of
+    # the front door (index.html) — never on other pages.
+    nav = nav_html() if filename == "index.html" else ""
     html = (head(title, desc, extra_head) +
             "<h1>%s</h1>\n<p class=\"hint\">%s</p>\n</header>\n" % (h1, sub) +
-            tabs(active_tab) + body + FOOT % (nav_html(), WELCOME_HTML))
+            tabs(active_tab) + body + FOOT % (nav, WELCOME_HTML))
     open(os.path.join(ROOT, filename), "w").write(html)
     print("wrote", filename, len(html), "bytes")
 
