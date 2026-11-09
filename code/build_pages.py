@@ -147,7 +147,7 @@ def head(title, desc, extra=""):
 <body>
 <div class="wrap">
 <header>
-<p class="kicker">SITE 32 OF 37 &middot; THE JAH NETWORK</p>
+<p class="kicker">SITE 32 OF 39 &middot; THE JAH NETWORK</p>
 """ % (title, desc, CSS, extra)
 
 def tabs(active):
